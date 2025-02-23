@@ -58,5 +58,9 @@ AI was used for discussing and refining the logic but not for writing the final 
 
 AI provided the backend view logic for generating the Excel file.
 
+## Screenshots
+
+![Transaction_Page](./screenshots/1.png)
+
 
 
