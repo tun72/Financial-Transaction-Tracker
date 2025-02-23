@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Financial Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #001845;
+            color: white;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            transition: width 0.3s;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+            padding: 10px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 18px;
+        }
+
+
+        .sidebar button, .sidebar select, .sidebar input {
+            display: block;
+            width: 100%;
+            background: #003366;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            cursor: pointer;
+
+        }
+
+        .filter-from {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar input {
+            width: 90%;
+        }
+
+        .sidebar button:hover {
+            background: #002244;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            width: calc(100% - 250px);
+            transition: margin-left 0.3s;
+
+        }
+
+        .summary-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            flex: 1;
+            margin: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #001845;
+            color: white;
+        }
+
+        .income { color: green; font-weight: bold; }
+        .expense { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="sidebar" id="sidebar">
+
+        <h2>Financial Tracker</h2>
+        <form method="post" action="{% url 'transaction_create' %}">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">Add Transaction</button>
+        </form>
+
+        <hr>
+
+        <div class="filter-from">
+            <form method="get" >
+            <div>
+                <label>Category:</label>
+                <select name="category">
+                <option value="">All Categories</option>
+                {% for value, label in categories %}
+                <option value="{{ value }}" {% if request.GET.category == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            </div>
+            <div>
+                <label>Start Date:</label>
+                <input type="date" name="start_date" value="{{ request.GET.start_date }}">
+            </div>
+            <div>
+                <label>End Date:</label>
+                <input type="date" name="end_date" value="{{ request.GET.end_date }}">
+            </div>
+            <button type="submit">Apply Filter</button>
+        </form>
+
+        <form method="get" action="{% url 'transaction_list' %}">
+    <button type="submit" class="clear-filter">Clear Filter</button>
+</form>
+        </div>
+
+        <hr>
+
+        <div class="export-button">
+        <a href="{% url 'export_transactions_excel' %}?{{ request.GET.urlencode }}" class="export-link">Export to Excel</a>
+    </div>
+    </div>
+
+
+
+    <div class="main-content" id="main-content">
+
+        <div class="summary-container">
+            <div class="summary-card"><h3>Total Income</h3><p>${{ total_income|floatformat:2 }}</p></div>
+            <div class="summary-card"><h3>Total Expenses</h3><p>${{ total_expenses|floatformat:2 }}</p></div>
+            <div class="summary-card"><h3>Net Balance</h3><p>${{ net_balance|floatformat:2 }}</p></div>
+            <div class="summary-card"><h3>Avg Monthly Expense</h3><p>${{ average_monthly_expense|floatformat:2 }}</p></div>
+        </div>
+
+        <h2>Transactions</h2>
+        <table>
+            <tr><th>Id</th><th>Date</th><th>Description</th><th>Amount</th><th>Category</th></tr>
+            {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.id }}</td>
+                <td>{{ transaction.date }}</td>
+                <td>{{ transaction.description }}</td>
+                <td class="{% if transaction.transaction_type == 'income' %}income{% else %}expense{% endif %}">$ {{ transaction.amount|floatformat:2 }}</td>
+                <td>{{ transaction.get_category_display }}</td>
+
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+</body>
+</html>

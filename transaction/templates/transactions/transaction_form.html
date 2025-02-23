@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Form</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color:  #002244;
+            outline: none;
+        }
+
+        .submit-btn {
+            background-color:  #002244;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color:  #002244;
+        }
+
+        .errorlist {
+            color: black;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .errorlist li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Add Transaction</h2>
+        <form method="post" action="{% url 'transaction_create' %}">
+            {% csrf_token %}
+
+
+
+            <!-- Render form fields manually for better control -->
+            <div class="form-group">
+                <label for="{{ form.amount.id_for_label }}">Amount:</label>
+                {{ form.amount }}
+                 {% if form.amount.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.amount.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+
+
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.transaction_type.id_for_label }}">Transaction Type:</label>
+                {{ form.transaction_type }}
+
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">Category:</label>
+                {{ form.category }}
+
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.date.id_for_label }}">Date:</label>
+                {{ form.date }}
+                {% if form.date.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.date.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.description.id_for_label }}">Description:</label>
+                {{ form.description }}
+
+            </div>
+
+            <button type="submit" class="submit-btn">Add</button>
+        </form>
+    </div>
+</body>
+</html>
