@@ -114,4 +114,4 @@ class TransactionCreateView(CreateView):
     model = Transaction
     form_class = TransactionForm
     template_name = 'transactions/transaction_form.html'
-    # success_url = reverse_lazy('transaction_list')
+    success_url = reverse_lazy('transaction_list')

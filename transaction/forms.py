@@ -19,10 +19,24 @@ class TransactionForm(forms.ModelForm):
             raise forms.ValidationError("Date cannot be in the future.")
         return date
 
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount is not None:
+            if amount == 0:
+                raise forms.ValidationError("Amount is required.")
+            if amount < 0:
+                raise forms.ValidationError("Amount cannot be negative.")
+            return amount
+        raise forms.ValidationError("Amount is required.")
+
+
     def clean(self):
         cleaned_data = super().clean()
         transaction_type = cleaned_data.get('transaction_type')
         amount = cleaned_data.get('amount')
+
+        if amount is None:
+            raise forms.ValidationError("Amount is required.")
 
 
 
